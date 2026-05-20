@@ -1,0 +1,42 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+# Distribution / packaging
+.Python
+build/
+dist/
+downloads/
+eggs/
+.eggs/
+*.egg-info/
+
+# Virtualenv
+venv/
+ENV/
+env/
+.venv/
+
+# IDEs and editors
+.idea/
+.vscode/
+
+# Jupyter
+.ipynb_checkpoints
+
+# Pytest
+.pytest_cache/
+
+# Logs and databases
+*.log
+*.sqlite3
+
+# macOS
+.DS_Store
+
+# Python env variables
+.env
