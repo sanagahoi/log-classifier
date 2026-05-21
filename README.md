@@ -5,8 +5,8 @@ Project that classifies log messages using multiple processors: BERT-based embed
 **Purpose:** provide a small pipeline to experiment with hybrid log classification methods and evaluate results on CSV test data.
 
 **Folder structure**
-- `classify.py`: CLI/entry for running classification (if present).
-- `main.py`: example runner / orchestration script.
+- `server.py`: FastAPI backend server for log classification.
+- `classify.py`: Core classification function called by the server.
 - `processor_bert.py`: BERT-based embedding classifier.
 - `processor_llm.py`: LLM-based processor wrapper.
 - `processor_regex.py`: Regex-based rules processor.
@@ -14,7 +14,7 @@ Project that classifies log messages using multiple processors: BERT-based embed
 - `requirements.txt`: Python dependencies.
 - `synthetic_logs.csv`: Example synthetic logs for development.
 - `test.csv`: Sample test set used for quick evaluation.
-- `output.csv`: Output file produced by runs.
+- `output.csv`: Output file produced by classification runs.
 - `Log_classifier.ipynb`: Notebook with experiments and analysis.
 
 **Quickstart — setup**
@@ -39,15 +39,43 @@ Project that classifies log messages using multiple processors: BERT-based embed
 	```
 
 **Usage**
-- Run the main script or notebook to classify logs and produce `output.csv`.
 
-	Example (if `main.py` exists and accepts arguments):
+**Running the FastAPI Server**
 
-	```bash
-	python main.py --input synthetic_logs.csv --output output.csv
-	```
+Start the backend server:
 
-- Alternatively open the notebook `Log_classifier.ipynb` to walk through preprocessing, model loading (`model.joblib`), and evaluation steps.
+```bash
+uvicorn server:app --reload
+```
+
+The server will be available at `http://localhost:8000`. 
+
+**Classification API Endpoint**
+
+- **Endpoint:** `POST /classify/`
+- **Input:** Upload a CSV file with `source` and `log_message` columns
+- **Output:** Returns a CSV file with the added `target_label` column containing classifications
+
+**Example using curl:**
+
+```bash
+curl -X POST "http://localhost:8000/classify/" -F "file=@test.csv"
+```
+
+**Example using Python:**
+
+```python
+import requests
+
+with open("test.csv", "rb") as f:
+    response = requests.post("http://localhost:8000/classify/", files={"file": f})
+    with open("output.csv", "wb") as out:
+        out.write(response.content)
+```
+
+**Using the Notebook**
+
+Alternatively open the notebook `Log_classifier.ipynb` to walk through preprocessing, model loading (`model.joblib`), and evaluation steps.
 
 **What each processor does**
 - `processor_bert.py`: extract embeddings from a BERT model (or a lightweight transformer), then classify using a downstream model.
